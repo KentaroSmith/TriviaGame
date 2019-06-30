@@ -1,0 +1,10 @@
+body{
+    background-image: url("../images/background.jpg");
+    background-size: cover;
+    
+}
+h1{
+    font-size: 50px;
+    color: green;
+    text-align: center;
+}
