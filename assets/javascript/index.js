@@ -1,5 +1,8 @@
 $(document).ready()
 var score = 0;
+var right = 0;
+var wrong = 0;
+var no_answer = 0;
 //7 questions Moes tavern, Cheers, McLaren's (How I met your mother), Paddy's pub from
 //it' always sunny, prancing pony lotr, the winchester (shaun of the dead), ten forward(startrek next gen)
 var questions = [{
@@ -33,7 +36,7 @@ var questions = [{
     correct_answer: "Don't stop me now"
 },
 {
-    question: "Who plays the bartender aboard the Enterprise in 'Star Trek: The Next Generation'?",
+    question: "Who played the bartender aboard the Enterprise in 'Star Trek: The Next Generation'?",
     answers: ["Whoopi Goldberg", "Nichelle Nichols", "Penny Johnson Jerald", "Denise Crosby"],
     correct_answer: "Whoopi Goldberg"
 }];
@@ -42,16 +45,25 @@ $("#start").on("click", function () {
     $("#start").hide();
     for (var i = 0; i < questions.length; i++) {
         var bar_question = $("<h4>").text(questions[i].question);
-        var ulist = $("<ul>");
-        var options;
+        var ulist = $("<ul class = 'options'>");
+        //var options;
         // for (var j = 0; i < questions[i].answers.length; j++) {
         //    options = $("<li>").text(questions[i].answers[j]);
         //}
-        var option1 = $("<li>").text(questions[i].answers[0]);
-        var option2 = $("<li>").text(questions[i].answers[1]);
-        var option3 = $("<li>").text(questions[i].answers[2]);
-        var option4 = $("<li>").text(questions[i].answers[3]);
-        $("#choices").append(bar_question).append(ulist).append(option1, option2, option3, option4);
+        var option1 = $("<li>").text(questions[i].answers[0]).append($("<input type='radio' value=0>"));
+        var option2 = $("<li>").text(questions[i].answers[1]).append($("<input type='radio' value=1>"));
+        var option3 = $("<li>").text(questions[i].answers[2]).append($("<input type='radio' value=2>"));
+        var option4 = $("<li>").text(questions[i].answers[3]).append($("<input type='radio' value=3>"));
+
+        $(".choices").append(bar_question).append(ulist).append(option1, option2, option3, option4);
     }
+    $("#end_choices").append($('<a class="btn btn-primary btn-lg" href="#" role="button" id="submit">').text("Submit"));
+});
+$("#submit").on("click", function () {
+    //When we submit, loop through the answers selected and compare to correct_answer in objects
+    //add up score and display stats
+    //hide the question choices and possibly show right answers for things you got wrong?
+    alert("submit works");
+
 
 })
