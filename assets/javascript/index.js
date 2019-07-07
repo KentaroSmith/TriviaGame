@@ -1,8 +1,5 @@
 $(document).ready()
-var score = 0;
-var right = 0;
-var wrong = 0;
-var no_answer = 0;
+
 //7 questions Moes tavern, Cheers, McLaren's (How I met your mother), Paddy's pub from
 //it' always sunny, prancing pony lotr, the winchester (shaun of the dead), ten forward(startrek next gen)
 var questions = [{
@@ -16,9 +13,9 @@ var questions = [{
     correct_answer: "Frasier"
 },
 {
-    question: "What is the name of the bar in 'How I met your Mother'?",
-    answers: ["MacLaren's", "Paddy's", "MacDonald's", "Central Perk"],
-    correct_answer: "MacLaren's"
+    question: "At MacLaren's, what is the name of the bartender in 'How I met your Mother'?",
+    answers: ['Carl', "Paddy", "George", "Gunter"],
+    correct_answer: 'Carl'
 },
 {
     question: "In 'It's Always Sunny in Phillidelphia' who in the gang doesn't own a stake in Paddy's pub?",
@@ -31,39 +28,87 @@ var questions = [{
     correct_answer: "Bree"
 },
 {
-    question: "In 'Shaun of the Dead', what song comes on the jukebox while the group fights off Zombies at the Winchester?",
-    answers: ["Stayin Alive", "Thriller", "Don't stop me now", "Maneater"],
-    correct_answer: "Don't stop me now"
+    question: "In 'Shaun of the Dead', what is the name of the pub that Shaun wants to meet up at?",
+    answers: ["The Enfield", "Ruger's", 'The Winchester', "Remmington's"],
+    correct_answer: 'The Winchester'
 },
 {
     question: "Who played the bartender aboard the Enterprise in 'Star Trek: The Next Generation'?",
     answers: ["Whoopi Goldberg", "Nichelle Nichols", "Penny Johnson Jerald", "Denise Crosby"],
     correct_answer: "Whoopi Goldberg"
 }];
-$("#start").on("click", function () {
-    $("#game_master").text("GO!");
-    $("#start").hide();
-    for (var i = 0; i < questions.length; i++) {
-        var bar_question = $("<h4>").text(questions[i].question);
-        var ulist = $("<ul class = 'options'>");
-        //var options;
-        // for (var j = 0; i < questions[i].answers.length; j++) {
-        //    options = $("<li>").text(questions[i].answers[j]);
-        //}
-        var option1 = $("<li>").text(questions[i].answers[0]).append($("<input type='radio' value=0>"));
-        var option2 = $("<li>").text(questions[i].answers[1]).append($("<input type='radio' value=1>"));
-        var option3 = $("<li>").text(questions[i].answers[2]).append($("<input type='radio' value=2>"));
-        var option4 = $("<li>").text(questions[i].answers[3]).append($("<input type='radio' value=3>"));
+var game = {
+    correct: 0,
+    incorrect: 0,
+    counter: 120,
+    countdown: function () {
+        game.counter--;
+        $("#counter").html(game.counter);
+        if (game.counter <= 0) {
+            console.log("time's up")
+            game.done();
+        }
+    },
+    start: function () {
+        timer = setInterval(game.countdown, 1000);
+        $(".choices").prepend('<h2>Time remaining: <span id="counter">120</span></h2>')
+        $("#game_master").text("GO!");
+        $("#start").hide();
+        for (var i = 0; i < questions.length; i++) {
+            var bar_question = $("<h4>").text(questions[i].question);
+            $(".choices").append(bar_question);
 
-        $(".choices").append(bar_question).append(ulist).append(option1, option2, option3, option4);
+            for (var j = 0; j < questions[i].answers.length; j++) {
+                $(".choices").append("<input type='radio' name ='question-" + i + "' value ='" + questions[i].answers[j] + "' >" + questions[i].answers[j]);
+            }
+        }
+    },
+    done: function () {
+        for (var i = 0; i < questions.length; i++)
+            $.each($("input[name='question-" + i + "']:checked"), function () {
+                console.log("loop is working")
+                if ($(this).val() === questions[i].correct_answer) {
+                    game.correct++;
+                    console.log(questions[i].correct_answer, "Correct!");
+                }
+                else {
+                    game.incorrect++;
+                    console.log(questions[i].correct_answer, "Incorrect", ($(this).val()));
+                }
+            })
+        this.result();
+
+    },
+    result: function () {
+        clearInterval(timer);
+        $('.choices h2').remove();
+        $("#game_master").remove();
+        $("#submit").remove();
+
+        $('.choices').html('<h2>Finished!</h2>');
+        $(".choices").append("<h3>Correct Answers: " + game.correct + "</h3>");
+        $(".choices").append("<h3>Incorrect Answers: " + game.incorrect + "</h3>");
+        $(".choices").append("<h3> Unanswered: " + (questions.length - (game.incorrect + game.correct)) + "</h3>");
     }
+}
+
+$("#start").on("click", function () {
+    game.start();
+
+    //the below text was my first run. Not the DRYest code in the world.
+    //var option1 = $("<li>").text(questions[i].answers[0]).append($("<input type='radio' value=0>"));
+    //var option2 = $("<li>").text(questions[i].answers[1]).append($("<input type='radio' value=1>"));
+    //var option3 = $("<li>").text(questions[i].answers[2]).append($("<input type='radio' value=2>"));
+    //var option4 = $("<li>").text(questions[i].answers[3]).append($("<input type='radio' value=3>"));
+
+    //$(".choices").append(bar_question).append(ulist).append(option1, option2, option3, option4);
+
     $("#end_choices").append($('<a class="btn btn-primary btn-lg" href="#" role="button" id="submit">').text("Submit"));
+
 });
-$("#submit").on("click", function () {
+$(document).on("click", "#submit", function () {
+    game.done();
     //When we submit, loop through the answers selected and compare to correct_answer in objects
     //add up score and display stats
-    //hide the question choices and possibly show right answers for things you got wrong?
-    alert("submit works");
-
-
+    //hide the question choices and possibly show right answers for things you got wrong? - work in progress.
 })
